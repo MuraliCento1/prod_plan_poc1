@@ -5,7 +5,7 @@ from database import SessionLocal, engine, ExcelData, Base
 import pandas as pd
 import os
 import logging
-from
+
 
 app = FastAPI()
 
