@@ -1,0 +1,122 @@
+/* Main container */
+.analytic-container {
+    display: flex;
+    height: 100vh;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Left Section - Takes half width */
+.left-section {
+    width: 50%;
+    height: 100%;
+    display: flex;
+}
+
+/* Right Section - Takes half width, divided into two equal parts */
+.right-section {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Each table should take full height of its section */
+.table-container {
+    flex: 1;
+    padding: 15px;
+    border: 3px solid #444;
+    /* Darker border */
+    border-radius: 8px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Different light colors for each table */
+.table-one {
+    background-color: #fce4ec;
+    /* Light Pink */
+    border-color: #b71c1c;
+    /* Darker border */
+}
+
+.table-two {
+    background-color: #e8f5e9;
+    /* Light Green */
+    border-color: #1b5e20;
+    /* Darker border */
+}
+
+.table-three {
+    background-color: #e3f2fd;
+    /* Light Blue */
+    border-color: #0d47a1;
+    /* Darker border */
+}
+
+/* Heading color should match table background */
+.table-one h2 {
+    background-color: #fce4ec;
+    color: #b71c1c;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.table-two h2 {
+    background-color: #e8f5e9;
+    color: #1b5e20;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.table-three h2 {
+    background-color: #e3f2fd;
+    color: #0d47a1;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    flex: 1;
+}
+
+th,
+td {
+    border: 3px solid #444;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Darker text color */
+th {
+    color: #222;
+}
+
+/* Table header should match table background */
+.table-one th {
+    background-color: #f8bbd0;
+    /* Darker Pink */
+}
+
+.table-two th {
+    background-color: #c8e6c9;
+    /* Darker Green */
+}
+
+.table-three th {
+    background-color: #bbdefb;
+    /* Darker Blue */
+}
+
+/* Alternate row colors for readability */
+tbody tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
