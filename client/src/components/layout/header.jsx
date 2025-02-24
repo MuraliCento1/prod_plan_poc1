@@ -18,7 +18,7 @@ export default function Header() {
 
 
       <nav className={`nav-links ${menuOpen ? "open" : ""}`}>
-        <Link to="/analytic">Analytic</Link>
+        <Link to="/analytic">Constrain Analysis</Link>
       </nav>
 
       <div className="header-icons">

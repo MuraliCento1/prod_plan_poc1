@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-import "../styles//TemplateAction.css"
+import "../styles/TemplateAction.css"
 
 const TemplateAction = () => {
   const [file, setFile] = useState(null);
