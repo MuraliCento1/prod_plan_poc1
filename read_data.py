@@ -76,7 +76,7 @@ def process_excel(faile_path):
             return {"status": "success", "message": "Excel data processed and updated in the database",
                     "data": updated_data}
         else:
-            logging.warning("%s file doesn't exists", excel_file_path)
+            logging.warning("%s file doesn't exists", faile_path)
     except Exception as e:
         logging.error(f"An error occurred: {str(e)}")
         print(f"An error occurred: {str(e)}")
