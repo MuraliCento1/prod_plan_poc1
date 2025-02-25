@@ -5,64 +5,52 @@ from database import SessionLocal, engine, ExcelData, Base
 import pandas as pd
 import os
 import logging
-
-
-app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
-def get_db():
-    logging.info("calling get")
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-upload_folder = "uploads"
-os.makedirs(upload_folder, exist_ok=True)
+from read_data import process_excel
 
 # Configure logging to write to a file
 logging.basicConfig(filename='app.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
+app = FastAPI()
 
-@app.post("/upload")
-async def upload_file(file: UploadFile = File(...), db: Session = Depends(get_db)):
-    logging.info("upload_file function called")
-    file_location = f"{upload_folder}/{file.filename}"
+# Configure Logging
+logging.basicConfig(filename='app.log', level=logging.INFO)
 
-    with open(file_location, "wb") as f:
-        f.write(await file.read())
+# Directory to save uploaded files
+UPLOAD_DIR = "uploads"
+if not os.path.exists(UPLOAD_DIR):
+    os.makedirs(UPLOAD_DIR)
 
-    logging.info(f"File downloaded to: {file_location}")
+@app.on_event("startup")
+async def startup_event():
+    logging.debug("API has started running.")
 
-    # Read the Excel file using pandas
-    df = pd.read_excel(file_location)
+@app.on_event("shutdown")
+async def shutdown_event():
+    logging.debug("API is shutting down.")
 
-    # Print the Excel content to the log
-    logging.info(f"Excel content:\n{df}")
+@app.post("/uploadfile/")
+async def upload_file(file: UploadFile = File(...)):
+    logging.debug("API endpoint /uploadfile/ triggered.")
+    try:
+        # Ensure the uploads directory exists
+        if not os.path.exists(UPLOAD_DIR):
+            os.makedirs(UPLOAD_DIR)
 
-    # Insert data into PostgreSQL using SQLAlchemy
-    for index, row in df.iterrows():
-        db_record = ExcelData(column1=row['Column1'], column2=row['Column2'])
-        # Add more columns as per your Excel data structure
-        db.add(db_record)
+        # Construct the file path
+        file_location = os.path.join(UPLOAD_DIR, file.filename)
 
-    db.commit()
+        # Save the file
+        with open(file_location, "wb") as f:
+            contents = await file.read()
+            f.write(contents)
+        logging.info("the uploaded file_location is %s", file_location)
 
-    logging.info(f"Data from '{file.filename}' uploaded to the database")
+        process_excel(file_location)
 
-    return {"message": f"File '{file.filename}' uploaded and data saved to the database successfully.",
-            "file_path": file_location}
-
+        return {"message": f"File '{file.filename}' uploaded and data saved to the database successfully.",
+                "file_path": file_location}
+    except Exception as err:
+        logging.warning("failed due :%s",err)
 
 if __name__ == "__main__":
     import uvicorn
