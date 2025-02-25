@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
@@ -8,18 +9,23 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 class DataUpdater:
-    def __init__(self, db_url):
+    def __init__(self, db_url, file_path):
         self.engine = create_engine(db_url)
         self.session = SessionLocal()
+        self.file_path = file_path
 
-    def read_excel(self, file_path):
+    def read_excel(self ):
         """Read Excel file and return DataFrame"""
-        df = pd.read_excel(file_path)
-        print(f"Read {len(df)} rows from {file_path}")
+        df = pd.read_excel(self.file_path)
+        print(f"Read {len(df)} rows from {self.file_path}")
         return df
 
-    def get_table_string(self, file_name):
+    def get_file_name(self):
+        return os.path.basename(self.file_path)
+
+    def get_table_string(self):
         # Split the string by the period '.'
+        file_name = self.get_file_name()
         base_string = file_name.split('.')[0]
 
         # Split the base string by '_'
