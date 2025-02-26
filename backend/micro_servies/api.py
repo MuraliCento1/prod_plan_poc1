@@ -1,11 +1,8 @@
 from fastapi import FastAPI, File, UploadFile, Depends, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
-from database import SessionLocal, engine, ExcelData, Base
-import pandas as pd
+
 import os
 import logging
-from read_data import process_excel
+
 
 # Configure logging to write to a file
 logging.basicConfig(filename='app.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
