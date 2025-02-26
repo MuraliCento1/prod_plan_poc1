@@ -1,0 +1,95 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    transition: background 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+    background: #121212;
+    color: white;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: #007bff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    margin-bottom: 15px;
+    color: white;
+}
+
+.header.dark {
+    background: #222;
+}
+
+.logo {
+    height: 40px;
+    width: auto;
+    max-width: 120px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: hwb(0 31% 64%);
+}
+
+/* Dark Mode & Hamburger Icons */
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toggle-theme,
+.menu-toggle {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: white;
+}
+
+/* Mobile Navigation */
+.menu-toggle {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background: white;
+        width: 200px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+    }
+
+    .header.dark .nav-links {
+        background: #222;
+    }
+
+    .nav-links.open {
+        display: flex;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+}
