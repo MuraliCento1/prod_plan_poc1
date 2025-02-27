@@ -21,7 +21,10 @@ class DataHandler:
         :return: DataFrame containing the Excel data.
         """
         try:
-            data_frame = pd.read_excel(file_path)
+            if file_path.endswith('.csv'):
+                data_frame = pd.read_csv(file_path)
+            else:
+                data_frame = pd.read_excel(file_path)
             self.logger.info("Excel content successfully converted to DataFrame.")
             return data_frame
         except Exception as e:
