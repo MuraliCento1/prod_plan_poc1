@@ -3,6 +3,7 @@ import logging
 from backend.database.database import Database
 from typing import List, Dict, Any
 import pandas as pd
+from sqlalchemy.exc import ProgrammingError
 from backend.database.table_models import (
     VendorInwardingMaster, StockMaster, VendorMaster, ProductionPlan, SkuMaster, Bom
 )
@@ -191,11 +192,16 @@ class DatabaseManager:
         table = Table(table_name, metadata, autoload_with=self.db.engine)
 
         try:
-            delete_stmt = table.delete().where(
-                getattr(table.c, list(condition.keys())[0]) == list(condition.values())[0]
-            )
+            if condition:
+                delete_stmt = table.delete().where(
+                    getattr(table.c, list(condition.keys())[0]) == list(condition.values())[0]
+                )
+            else:
+                delete_stmt = table.delete()
+
             self.session.execute(delete_stmt)
             self.session.commit()
+
         except Exception as e:
             self.logger.error(f"Error deleting table data: {e}")
             self.session.rollback()
@@ -218,24 +224,6 @@ class DatabaseManager:
             return [dict(zip(columns, result)) for result in results]
         except Exception as e:
             self.logger.error(f"Error retrieving table columns: {e}")
-            raise
-        finally:
-            self.disconnect()
-
-    def insert_dataframe_into_table(self, table_name: str, dataframe: pd.DataFrame,
-                                    if_exists: str = 'append') -> None:
-        """
-        Insert a DataFrame into the specified table.
-
-        :param table_name: Name of the table.
-        :param dataframe: DataFrame to be inserted.
-        :param if_exists: Behavior when the table already exists ('fail', 'replace', 'append').
-        """
-        self.connect()
-        try:
-            dataframe.to_sql(table_name, con=self.db.engine, if_exists=if_exists, index=False)
-        except Exception as e:
-            self.logger.error(f"Error inserting DataFrame into table: {e}")
             raise
         finally:
             self.disconnect()
@@ -324,4 +312,69 @@ class DatabaseManager:
         finally:
             self.disconnect()
 
+    def insert_dataframe_into_table(self, table_name: str, dataframe: pd.DataFrame, if_exists: str = 'append') -> str:
+        """
+        Insert a DataFrame into the specified table. Create the table if it does not exist.
 
+        :param table_name: Name of the table.
+        :param dataframe: DataFrame to be inserted.
+        :param if_exists: Behavior when the table already exists ('fail', 'replace', 'append').
+        :return: Message indicating success or failure.
+        """
+        self.connect()
+        try:
+            dataframe.to_sql(table_name, con=self.db.engine, if_exists=if_exists, index=False)
+            self.db.logger.info(f"Data inserted into table '{table_name}'.")
+            return f"Data successfully inserted into table '{table_name}'."
+        except ProgrammingError as e:
+            if "does not exist" in str(e):
+                self.db.logger.error(f"Table '{table_name}' does not exist.")
+                return f"Table '{table_name}' does not exist. Data insertion aborted."
+            else:
+                self.db.logger.error(f"Error inserting DataFrame into table: {e}")
+                return f"Error inserting DataFrame into table: {e}"
+        except Exception as e:
+            self.db.logger.error(f"Error inserting DataFrame into table: {e}")
+            return f"Error inserting DataFrame into table: {e}"
+        finally:
+            self.disconnect()
+
+    def delete_table_data(self, table_name: str, condition: Dict[str, Any]) -> None:
+        self.connect()
+        metadata = MetaData()
+        table = Table(table_name, metadata, autoload_with=self.db.engine)
+        try:
+            delete_stmt = table.delete().where(
+                getattr(table.c, list(condition.keys())[0]) == list(condition.values())[0]
+            )
+            self.session.execute(delete_stmt)
+            self.session.commit()
+        except Exception as e:
+            self.db.logger.error(f"Error deleting table data: {e}")
+            self.session.rollback()
+            raise
+        finally:
+            self.disconnect()
+
+    def delete_row_from_table(self, table_name: str, condition: Dict[str, Any]) -> None:
+        """
+        Delete a row from the specified table based on a condition.
+
+        :param table_name: Name of the table.
+        :param condition: Dictionary with the condition for deleting the row.
+        """
+        self.connect()
+        metadata = MetaData()
+        table = Table(table_name, metadata, autoload_with=self.db.engine)
+        try:
+            delete_stmt = table.delete().where(
+                getattr(table.c, list(condition.keys())[0]) == list(condition.values())[0]
+            )
+            self.session.execute(delete_stmt)
+            self.session.commit()
+        except Exception as e:
+            self.db.logger.error(f"Error deleting row from table: {e}")
+            self.session.rollback()
+            raise
+        finally:
+            self.disconnect()
