@@ -30,7 +30,7 @@ class ApiEndpoints:
         self.router.get("/downloadfile/")(self.download_file)
         self.router.get("/get-data/")(self.get_data)
         self.router.get("/get-fg-data/")(self.get_fg_data)
-        # self.router.get("/get-rm-data/")(self.get_rm_data)
+        self.router.get("/get-rm-data/")(self.get_rm_data)
         self.logger = logging.getLogger(__name__)
         self.data_handler = DataHandler()
 
