@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from endpoints.file_endpoints import api_endpoints
+from backend.micro_services.endpoints.file_endpoints import api_endpoints
 
 
 class App:
