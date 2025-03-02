@@ -2,7 +2,7 @@ import os
 from fastapi import APIRouter, File, UploadFile, Query, HTTPException
 from typing import List
 import logging
-import pandas as pd
+
 from backend.data_handler import DataHandler
 from fastapi.responses import JSONResponse
 
@@ -28,9 +28,9 @@ class ApiEndpoints:
         self.router = APIRouter()
         self.router.post("/uploadfile/")(self.upload_file)
         self.router.get("/downloadfile/")(self.download_file)
-        self.router.get("/get-data/")(self.get_data)
         self.router.get("/get-fg-data/")(self.get_fg_data)
-        # self.router.get("/get-rm-data/")(self.get_rm_data)
+        self.router.get("/get-rm-data/")(self.get_rm_data)
+        self.router.get("/get-machine-data/")(self.get_machine_data)
         self.logger = logging.getLogger(__name__)
         self.data_handler = DataHandler()
 
@@ -82,7 +82,7 @@ class ApiEndpoints:
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
-    async def get_data(self, plant_code: int = 1, rm: List[str] = Query([]), machine: List[str] = Query([])):
+    async def get_machine_data(self, plant_code: int = 1, rm: List[str] = Query([]), machine: List[str] = Query([])):
         """
         Handle data retrieval request. Return a DataFrame or Excel data as JSON response.
 

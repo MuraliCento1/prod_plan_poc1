@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from endpoints.file_endpoints import api_endpoints
-
+from fastapi.middleware.cors import CORSMiddleware
+from backend.micro_services.endpoints.file_endpoints import api_endpoints
 
 class App:
     def __init__(self):
@@ -9,6 +9,7 @@ class App:
         """
         self.app = FastAPI()
         self.include_routers()
+        self.setup_cors()
 
     def include_routers(self):
         """
@@ -17,6 +18,23 @@ class App:
         """
         self.app.include_router(api_endpoints.router)
 
+    def setup_cors(self):
+        """
+        Set up CORS middleware for the FastAPI app.
+        """
+        origins = [
+            "http://localhost:3000",  # Replace with your frontend URL
+            "http://127.0.0.1:3000",  # Replace with your frontend URL
+            # Add other allowed origins as needed
+        ]
+
+        self.app.add_middleware(
+            CORSMiddleware,
+            allow_origins=origins,
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
 
     def run(self, host="127.0.0.1", port=8000):
         """
@@ -29,9 +47,26 @@ class App:
         import uvicorn
         uvicorn.run(self.app, host=host, port=port)
 
-
 # Instantiate the app_instance at the module level
 app_instance = App()
 
 if __name__ == "__main__":
     app_instance.run()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
