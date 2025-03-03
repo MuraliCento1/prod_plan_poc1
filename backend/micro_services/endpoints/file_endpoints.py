@@ -1,4 +1,5 @@
-import os
+import os, sys
+sys.path.append('PROD_PLAN_POC1/backend/')
 from fastapi import APIRouter, File, UploadFile, Query, HTTPException
 from typing import List
 import logging
@@ -93,7 +94,7 @@ class ApiEndpoints:
         """
         try:
             # Read data from CSV or Excel file
-            file_path = r'C:\Satish\tmp_data\people-100.csv'  # Update this path to your actual file
+            file_path = r'/Users/neera/Downloads/people-100.csv'  # Update this path to your actual file
             data_frame = self.data_handler.excel_to_dataframe(file_path)
 
             # Return DataFrame as JSON response
@@ -114,7 +115,7 @@ class ApiEndpoints:
         """
         try:
             # Read data from CSV or Excel file
-            file_path = r'C:\Satish\tmp_data\people-100.csv'  # Update this path to your actual file
+            file_path = r'/Users/neera/Downloads/people-100.csv'  # Update this path to your actual file
             data_frame = self.data_handler.excel_to_dataframe(file_path)
 
             # Return DataFrame as JSON response
@@ -135,7 +136,7 @@ class ApiEndpoints:
         """
         try:
             # Read data from CSV or Excel file
-            file_path = r'C:\Satish\tmp_data\people-100.csv'  # Update this path to your actual file
+            file_path = r'/Users/neera/Downloads/people-100.csv'  # Update this path to your actual file
             data_frame = self.data_handler.excel_to_dataframe(file_path)
 
             # Return DataFrame as JSON response

@@ -11,7 +11,6 @@ const App = () => {
             <Route path="/" element={<TemplateAction />} />
             <Route path="/analytic" element={<Analytic />} />
         </Routes>
-        {/* <TemplateAction /> */}
     </>)
 }
 
