@@ -1,0 +1,14 @@
+{
+    "database": {
+        "host": "localhost",
+        "port": 5432,
+        "username": "postgres",
+        "password": "799799",
+        "database_name": "postgres"
+    },
+
+    "file_paths": {
+        "upload_dir": "new_uploaded--",
+        "data_file": "C:\\Satish\\tmp_data\\people-100.csv"
+    }
+}

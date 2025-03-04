@@ -1,7 +1,7 @@
 import logging
 import pandas as pd
 from backend.database.db_manager import DatabaseManager
-
+from backend.config import Config
 logging.basicConfig(level=logging.INFO)
 
 
@@ -12,6 +12,7 @@ class DataHandler:
         """
         self.logger = logging.getLogger(__name__)
         self.data_manager = DatabaseManager()
+        self.file_paths = Config.file_paths
 
     def excel_to_dataframe(self, file_path: str):
         """
@@ -21,6 +22,7 @@ class DataHandler:
         :return: DataFrame containing the Excel data.
         """
         try:
+            self.file_paths['upload_dir'] = file_path
             if file_path.endswith('.csv'):
                 data_frame = pd.read_csv(file_path)
             else:

@@ -4,6 +4,7 @@ from backend.database.database import Database
 from typing import List, Dict, Any
 import pandas as pd
 from sqlalchemy.exc import ProgrammingError
+from backend.config import Config
 from backend.database.table_models import (
     VendorInwardingMaster, StockMaster, VendorMaster, ProductionPlan, SkuMaster, Bom
 )
@@ -12,11 +13,18 @@ from backend.database.table_models import (
 logging.basicConfig(level=logging.INFO)
 
 
-DATABASE_URL = "postgresql://postgres:799799@localhost:5432/postgres"
+DATABASE_URL = Config().database_url
 db = Database(DATABASE_URL)
 
 
 class DatabaseManager:
+    _instance = None  # Class attribute to hold the singleton instance
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(DatabaseManager, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+
     def __init__(self):
         self.db = db
         self.session = None
@@ -339,45 +347,6 @@ class DatabaseManager:
         finally:
             self.disconnect()
 
-    def delete_table_data(self, table_name: str, condition: Dict[str, Any]) -> None:
-        self.connect()
-        metadata = MetaData()
-        table = Table(table_name, metadata, autoload_with=self.db.engine)
-        try:
-            delete_stmt = table.delete().where(
-                getattr(table.c, list(condition.keys())[0]) == list(condition.values())[0]
-            )
-            self.session.execute(delete_stmt)
-            self.session.commit()
-        except Exception as e:
-            self.db.logger.error(f"Error deleting table data: {e}")
-            self.session.rollback()
-            raise
-        finally:
-            self.disconnect()
-
-    def delete_row_from_table(self, table_name: str, condition: Dict[str, Any]) -> None:
-        """
-        Delete a row from the specified table based on a condition.
-
-        :param table_name: Name of the table.
-        :param condition: Dictionary with the condition for deleting the row.
-        """
-        self.connect()
-        metadata = MetaData()
-        table = Table(table_name, metadata, autoload_with=self.db.engine)
-        try:
-            delete_stmt = table.delete().where(
-                getattr(table.c, list(condition.keys())[0]) == list(condition.values())[0]
-            )
-            self.session.execute(delete_stmt)
-            self.session.commit()
-        except Exception as e:
-            self.db.logger.error(f"Error deleting row from table: {e}")
-            self.session.rollback()
-            raise
-        finally:
-            self.disconnect()
 
     def read_table_data_as_dataframe(
             self, table_name: str, filters: str = None, columns: List[str] = None
