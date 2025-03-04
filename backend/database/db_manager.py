@@ -378,3 +378,32 @@ class DatabaseManager:
             raise
         finally:
             self.disconnect()
+
+    def read_table_data_as_dataframe(
+            self, table_name: str, filters: str = None, columns: List[str] = None
+    ) -> pd.DataFrame:
+        """
+        Read data from the specified table with optional filters and column selection,
+        and return it as a pandas DataFrame.
+
+        :param table_name: Name of the table.
+        :param filters: SQL WHERE clause for filtering rows (e.g., "column1 = 'value'").
+        :param columns: List of column names to include in the result.
+        :return: pandas DataFrame with table data.
+        """
+        self.connect()
+        try:
+            # Construct the SQL query
+            selected_columns = ", ".join(columns) if columns else "*"
+            query = f"SELECT {selected_columns} FROM {table_name}"
+            if filters:
+                query += f" WHERE {filters}"
+
+            # Use pandas read_sql to fetch the filtered table data
+            dataframe = pd.read_sql(text(query), con=self.db.engine)
+            return dataframe
+        except Exception as e:
+            self.db.logger.error(f"Error reading table data as DataFrame with filters: {e}")
+            raise
+        finally:
+            self.disconnect()
