@@ -89,7 +89,7 @@ class DatabaseManager:
             # Construct the columns to retrieve using the table columns
             selected_columns = [getattr(table.c, col) for col in columns]
             self.logger.info("columns: %s", selected_columns)
-            query =  self.session.query(*selected_columns)
+            query = self.session.query(*selected_columns)
             results = query.all()
 
             # Convert results to a list of dictionaries

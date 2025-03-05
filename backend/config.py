@@ -2,6 +2,7 @@ import json
 import os
 from typing import Any
 
+
 class Config:
     _instance = None
 
