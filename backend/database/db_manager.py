@@ -334,16 +334,12 @@ class DatabaseManager:
             dataframe.to_sql(table_name, con=self.db.engine, if_exists=if_exists, index=False)
             self.db.logger.info(f"Data inserted into table '{table_name}'.")
             return f"Data successfully inserted into table '{table_name}'."
-        except ProgrammingError as e:
-            if "does not exist" in str(e):
-                self.db.logger.error(f"Table '{table_name}' does not exist.")
-                return f"Table '{table_name}' does not exist. Data insertion aborted."
-            else:
-                self.db.logger.error(f"Error inserting DataFrame into table: {e}")
-                return f"Error inserting DataFrame into table: {e}"
-        except Exception as e:
-            self.db.logger.error(f"Error inserting DataFrame into table: {e}")
-            return f"Error inserting DataFrame into table: {e}"
+        except ProgrammingError as err:
+            self.db.logger.error(f"Error inserting DataFrame into {table_name} table: {err}")
+            return err
+        except Exception as err:
+            self.db.logger.error(f"Error inserting DataFrame into {table_name} table: {err}")
+            return err
         finally:
             self.disconnect()
 

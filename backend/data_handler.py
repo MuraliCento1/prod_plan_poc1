@@ -42,8 +42,8 @@ class DataHandler:
         try:
             data_frame = self.excel_to_dataframe(file_path)
             update_status = self.data_manager.insert_dataframe_into_table(table_name, data_frame)
-            if "does not exist" in update_status:
-                self.data_manager.create_tables_structures()
-                self.data_manager.insert_dataframe_into_table(table_name, data_frame)
+            # if "does not exist" in update_status:
+            #     self.data_manager.create_tables_structures()
+            #     self.data_manager.insert_dataframe_into_table(table_name, data_frame)
         except Exception as e:
             self.logger.error(f"Error converting Excel content to DataFrame: {e}")
